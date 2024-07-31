@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Agility CodeChunks",
+  "version": "1.0",
+  "description": "Converts text in Agility to code chunks",
+  "permissions": [
+    "tabs",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking",
+    "contextMenus",
+    "storage",
+    "unlimitedStorage",
+    "alarms",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://*.v1host.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "agility.png",
+      "48": "agility.png",
+      "128": "agility.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.v1host.com/*"],
+      "run_at": "document_start",
+      "js": ["bundle.js", "prism.js"],
+      "css": ["./themes/prism.css"]
+    }
+  ]
+}

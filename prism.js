@@ -1,5 +1,5 @@
 /* PrismJS 1.29.0
-https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+clike+javascript+bash+c+csharp+cpp+cobol+css-extras+csv+git+gradle+groovy+http+java+json+json5+kotlin+less+markdown+powershell+python+r+jsx+tsx+sass+scss+shell-session+sql+typescript+typoscript+xml-doc+yaml&plugins=line-numbers+autolinker+highlight-keywords+inline-color+command-line+normalize-whitespace+toolbar+copy-to-clipboard+treeview */
+https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+clike+javascript+bash+c+csharp+cpp+cobol+csv+excel-formula+gradle+groovy+http+java+json+json5+kotlin+less+markdown+markup-templating+mongodb+php+powershell+python+r+sass+scss+shell-session+splunk-spl+sql+typescript+yaml&plugins=toolbar */
 /// <reference lib="WebWorker"/>
 
 var _self = (typeof window !== 'undefined')
@@ -1205,6 +1205,10 @@ var Prism = (function (_self) {
 	return _;
 
 }(_self));
+
+Prism.hooks.add("before-highlight", function (env) {
+	env.code = env.element.innerText;
+});
 
 if (typeof module !== 'undefined' && module.exports) {
 	module.exports = Prism;
@@ -2559,127 +2563,6 @@ Prism.languages.cobol = {
 	'punctuation': /[.:,()]/
 };
 
-(function (Prism) {
-
-	var string = /("|')(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/;
-	var selectorInside;
-
-	Prism.languages.css.selector = {
-		pattern: Prism.languages.css.selector.pattern,
-		lookbehind: true,
-		inside: selectorInside = {
-			'pseudo-element': /:(?:after|before|first-letter|first-line|selection)|::[-\w]+/,
-			'pseudo-class': /:[-\w]+/,
-			'class': /\.[-\w]+/,
-			'id': /#[-\w]+/,
-			'attribute': {
-				pattern: RegExp('\\[(?:[^[\\]"\']|' + string.source + ')*\\]'),
-				greedy: true,
-				inside: {
-					'punctuation': /^\[|\]$/,
-					'case-sensitivity': {
-						pattern: /(\s)[si]$/i,
-						lookbehind: true,
-						alias: 'keyword'
-					},
-					'namespace': {
-						pattern: /^(\s*)(?:(?!\s)[-*\w\xA0-\uFFFF])*\|(?!=)/,
-						lookbehind: true,
-						inside: {
-							'punctuation': /\|$/
-						}
-					},
-					'attr-name': {
-						pattern: /^(\s*)(?:(?!\s)[-\w\xA0-\uFFFF])+/,
-						lookbehind: true
-					},
-					'attr-value': [
-						string,
-						{
-							pattern: /(=\s*)(?:(?!\s)[-\w\xA0-\uFFFF])+(?=\s*$)/,
-							lookbehind: true
-						}
-					],
-					'operator': /[|~*^$]?=/
-				}
-			},
-			'n-th': [
-				{
-					pattern: /(\(\s*)[+-]?\d*[\dn](?:\s*[+-]\s*\d+)?(?=\s*\))/,
-					lookbehind: true,
-					inside: {
-						'number': /[\dn]+/,
-						'operator': /[+-]/
-					}
-				},
-				{
-					pattern: /(\(\s*)(?:even|odd)(?=\s*\))/i,
-					lookbehind: true
-				}
-			],
-			'combinator': />|\+|~|\|\|/,
-
-			// the `tag` token has been existed and removed.
-			// because we can't find a perfect tokenize to match it.
-			// if you want to add it, please read https://github.com/PrismJS/prism/pull/2373 first.
-
-			'punctuation': /[(),]/,
-		}
-	};
-
-	Prism.languages.css['atrule'].inside['selector-function-argument'].inside = selectorInside;
-
-	Prism.languages.insertBefore('css', 'property', {
-		'variable': {
-			pattern: /(^|[^-\w\xA0-\uFFFF])--(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*/i,
-			lookbehind: true
-		}
-	});
-
-	var unit = {
-		pattern: /(\b\d+)(?:%|[a-z]+(?![\w-]))/,
-		lookbehind: true
-	};
-	// 123 -123 .123 -.123 12.3 -12.3
-	var number = {
-		pattern: /(^|[^\w.-])-?(?:\d+(?:\.\d+)?|\.\d+)/,
-		lookbehind: true
-	};
-
-	Prism.languages.insertBefore('css', 'function', {
-		'operator': {
-			pattern: /(\s)[+\-*\/](?=\s)/,
-			lookbehind: true
-		},
-		// CAREFUL!
-		// Previewers and Inline color use hexcode and color.
-		'hexcode': {
-			pattern: /\B#[\da-f]{3,8}\b/i,
-			alias: 'color'
-		},
-		'color': [
-			{
-				pattern: /(^|[^\w-])(?:AliceBlue|AntiqueWhite|Aqua|Aquamarine|Azure|Beige|Bisque|Black|BlanchedAlmond|Blue|BlueViolet|Brown|BurlyWood|CadetBlue|Chartreuse|Chocolate|Coral|CornflowerBlue|Cornsilk|Crimson|Cyan|DarkBlue|DarkCyan|DarkGoldenRod|DarkGr[ae]y|DarkGreen|DarkKhaki|DarkMagenta|DarkOliveGreen|DarkOrange|DarkOrchid|DarkRed|DarkSalmon|DarkSeaGreen|DarkSlateBlue|DarkSlateGr[ae]y|DarkTurquoise|DarkViolet|DeepPink|DeepSkyBlue|DimGr[ae]y|DodgerBlue|FireBrick|FloralWhite|ForestGreen|Fuchsia|Gainsboro|GhostWhite|Gold|GoldenRod|Gr[ae]y|Green|GreenYellow|HoneyDew|HotPink|IndianRed|Indigo|Ivory|Khaki|Lavender|LavenderBlush|LawnGreen|LemonChiffon|LightBlue|LightCoral|LightCyan|LightGoldenRodYellow|LightGr[ae]y|LightGreen|LightPink|LightSalmon|LightSeaGreen|LightSkyBlue|LightSlateGr[ae]y|LightSteelBlue|LightYellow|Lime|LimeGreen|Linen|Magenta|Maroon|MediumAquaMarine|MediumBlue|MediumOrchid|MediumPurple|MediumSeaGreen|MediumSlateBlue|MediumSpringGreen|MediumTurquoise|MediumVioletRed|MidnightBlue|MintCream|MistyRose|Moccasin|NavajoWhite|Navy|OldLace|Olive|OliveDrab|Orange|OrangeRed|Orchid|PaleGoldenRod|PaleGreen|PaleTurquoise|PaleVioletRed|PapayaWhip|PeachPuff|Peru|Pink|Plum|PowderBlue|Purple|RebeccaPurple|Red|RosyBrown|RoyalBlue|SaddleBrown|Salmon|SandyBrown|SeaGreen|SeaShell|Sienna|Silver|SkyBlue|SlateBlue|SlateGr[ae]y|Snow|SpringGreen|SteelBlue|Tan|Teal|Thistle|Tomato|Transparent|Turquoise|Violet|Wheat|White|WhiteSmoke|Yellow|YellowGreen)(?![\w-])/i,
-				lookbehind: true
-			},
-			{
-				pattern: /\b(?:hsl|rgb)\(\s*\d{1,3}\s*,\s*\d{1,3}%?\s*,\s*\d{1,3}%?\s*\)\B|\b(?:hsl|rgb)a\(\s*\d{1,3}\s*,\s*\d{1,3}%?\s*,\s*\d{1,3}%?\s*,\s*(?:0|0?\.\d+|1)\s*\)\B/i,
-				inside: {
-					'unit': unit,
-					'number': number,
-					'function': /[\w-]+(?=\()/,
-					'punctuation': /[(),]/
-				}
-			}
-		],
-		// it's important that there is no boundary assertion after the hex digits
-		'entity': /\\[\da-f]{1,8}/i,
-		'unit': unit,
-		'number': number
-	});
-
-}(Prism));
-
 // https://tools.ietf.org/html/rfc4180
 
 Prism.languages.csv = {
@@ -2687,74 +2570,72 @@ Prism.languages.csv = {
 	'punctuation': /,/
 };
 
-Prism.languages.git = {
-	/*
-	 * A simple one line comment like in a git status command
-	 * For instance:
-	 * $ git status
-	 * # On branch infinite-scroll
-	 * # Your branch and 'origin/sharedBranches/frontendTeam/infinite-scroll' have diverged,
-	 * # and have 1 and 2 different commits each, respectively.
-	 * nothing to commit (working directory clean)
-	 */
-	'comment': /^#.*/m,
+Prism.languages['excel-formula'] = {
+	'comment': {
+		pattern: /(\bN\(\s*)"(?:[^"]|"")*"(?=\s*\))/i,
+		lookbehind: true,
+		greedy: true
+	},
+	'string': {
+		pattern: /"(?:[^"]|"")*"(?!")/,
+		greedy: true
+	},
+	'reference': {
+		// https://www.ablebits.com/office-addins-blog/2015/12/08/excel-reference-another-sheet-workbook/
 
-	/*
-	 * Regexp to match the changed lines in a git diff output. Check the example below.
-	 */
-	'deleted': /^[-–].*/m,
-	'inserted': /^\+.*/m,
+		// Sales!B2
+		// 'Winter sales'!B2
+		// [Sales.xlsx]Jan!B2:B5
+		// D:\Reports\[Sales.xlsx]Jan!B2:B5
+		// '[Sales.xlsx]Jan sales'!B2:B5
+		// 'D:\Reports\[Sales.xlsx]Jan sales'!B2:B5
 
-	/*
-	 * a string (double and simple quote)
-	 */
-	'string': /("|')(?:\\.|(?!\1)[^\\\r\n])*\1/,
-
-	/*
-	 * a git command. It starts with a random prompt finishing by a $, then "git" then some other parameters
-	 * For instance:
-	 * $ git add file.txt
-	 */
-	'command': {
-		pattern: /^.*\$ git .*$/m,
+		pattern: /(?:'[^']*'|(?:[^\s()[\]{}<>*?"';,$&]*\[[^^\s()[\]{}<>*?"']+\])?\w+)!/,
+		greedy: true,
+		alias: 'string',
 		inside: {
-			/*
-			 * A git command can contain a parameter starting by a single or a double dash followed by a string
-			 * For instance:
-			 * $ git diff --cached
-			 * $ git log -p
-			 */
-			'parameter': /\s--?\w+/
+			'operator': /!$/,
+			'punctuation': /'/,
+			'sheet': {
+				pattern: /[^[\]]+$/,
+				alias: 'function'
+			},
+			'file': {
+				pattern: /\[[^[\]]+\]$/,
+				inside: {
+					'punctuation': /[[\]]/
+				}
+			},
+			'path': /[\s\S]+/
 		}
 	},
-
-	/*
-	 * Coordinates displayed in a git diff command
-	 * For instance:
-	 * $ git diff
-	 * diff --git file.txt file.txt
-	 * index 6214953..1d54a52 100644
-	 * --- file.txt
-	 * +++ file.txt
-	 * @@ -1 +1,2 @@
-	 * -Here's my tetx file
-	 * +Here's my text file
-	 * +And this is the second line
-	 */
-	'coord': /^@@.*@@$/m,
-
-	/*
-	 * Match a "commit [SHA1]" line in a git log output.
-	 * For instance:
-	 * $ git log
-	 * commit a11a14ef7e26f2ca62d4b35eac455ce636d0dc09
-	 * Author: lgiraudel
-	 * Date:   Mon Feb 17 11:18:34 2014 +0100
-	 *
-	 *     Add of a new line
-	 */
-	'commit-sha1': /^commit \w{40}$/m
+	'function-name': {
+		pattern: /\b[A-Z]\w*(?=\()/i,
+		alias: 'builtin'
+	},
+	'range': {
+		pattern: /\$?\b(?:[A-Z]+\$?\d+:\$?[A-Z]+\$?\d+|[A-Z]+:\$?[A-Z]+|\d+:\$?\d+)\b/i,
+		alias: 'selector',
+		inside: {
+			'operator': /:/,
+			'cell': /\$?[A-Z]+\$?\d+/i,
+			'column': /\$?[A-Z]+/i,
+			'row': /\$?\d+/
+		}
+	},
+	'cell': {
+		// Excel is case insensitive, so the string "foo1" could be either a variable or a cell.
+		// To combat this, we match cells case insensitive, if the contain at least one "$", and case sensitive otherwise.
+		pattern: /\b[A-Z]+\d+\b|\$[A-Za-z]+\$?\d+\b|\b[A-Za-z]+\$\d+\b/,
+		alias: 'selector'
+	},
+	'number': /(?:\b\d+(?:\.\d+)?|\B\.\d+)(?:e[+-]?\d+)?\b/i,
+	'boolean': /\b(?:FALSE|TRUE)\b/i,
+	'operator': /[-+*/^%=&,]|<[=>]?|>=?/,
+	'punctuation': /[[\]();{}|]/
 };
+
+Prism.languages['xlsx'] = Prism.languages['xls'] = Prism.languages['excel-formula'];
 
 (function (Prism) {
 	var interpolation = {
@@ -3777,6 +3658,572 @@ Prism.languages.insertBefore('less', 'property', {
 
 (function (Prism) {
 
+	/**
+	 * Returns the placeholder for the given language id and index.
+	 *
+	 * @param {string} language
+	 * @param {string|number} index
+	 * @returns {string}
+	 */
+	function getPlaceholder(language, index) {
+		return '___' + language.toUpperCase() + index + '___';
+	}
+
+	Object.defineProperties(Prism.languages['markup-templating'] = {}, {
+		buildPlaceholders: {
+			/**
+			 * Tokenize all inline templating expressions matching `placeholderPattern`.
+			 *
+			 * If `replaceFilter` is provided, only matches of `placeholderPattern` for which `replaceFilter` returns
+			 * `true` will be replaced.
+			 *
+			 * @param {object} env The environment of the `before-tokenize` hook.
+			 * @param {string} language The language id.
+			 * @param {RegExp} placeholderPattern The matches of this pattern will be replaced by placeholders.
+			 * @param {(match: string) => boolean} [replaceFilter]
+			 */
+			value: function (env, language, placeholderPattern, replaceFilter) {
+				if (env.language !== language) {
+					return;
+				}
+
+				var tokenStack = env.tokenStack = [];
+
+				env.code = env.code.replace(placeholderPattern, function (match) {
+					if (typeof replaceFilter === 'function' && !replaceFilter(match)) {
+						return match;
+					}
+					var i = tokenStack.length;
+					var placeholder;
+
+					// Check for existing strings
+					while (env.code.indexOf(placeholder = getPlaceholder(language, i)) !== -1) {
+						++i;
+					}
+
+					// Create a sparse array
+					tokenStack[i] = match;
+
+					return placeholder;
+				});
+
+				// Switch the grammar to markup
+				env.grammar = Prism.languages.markup;
+			}
+		},
+		tokenizePlaceholders: {
+			/**
+			 * Replace placeholders with proper tokens after tokenizing.
+			 *
+			 * @param {object} env The environment of the `after-tokenize` hook.
+			 * @param {string} language The language id.
+			 */
+			value: function (env, language) {
+				if (env.language !== language || !env.tokenStack) {
+					return;
+				}
+
+				// Switch the grammar back
+				env.grammar = Prism.languages[language];
+
+				var j = 0;
+				var keys = Object.keys(env.tokenStack);
+
+				function walkTokens(tokens) {
+					for (var i = 0; i < tokens.length; i++) {
+						// all placeholders are replaced already
+						if (j >= keys.length) {
+							break;
+						}
+
+						var token = tokens[i];
+						if (typeof token === 'string' || (token.content && typeof token.content === 'string')) {
+							var k = keys[j];
+							var t = env.tokenStack[k];
+							var s = typeof token === 'string' ? token : token.content;
+							var placeholder = getPlaceholder(language, k);
+
+							var index = s.indexOf(placeholder);
+							if (index > -1) {
+								++j;
+
+								var before = s.substring(0, index);
+								var middle = new Prism.Token(language, Prism.tokenize(t, env.grammar), 'language-' + language, t);
+								var after = s.substring(index + placeholder.length);
+
+								var replacement = [];
+								if (before) {
+									replacement.push.apply(replacement, walkTokens([before]));
+								}
+								replacement.push(middle);
+								if (after) {
+									replacement.push.apply(replacement, walkTokens([after]));
+								}
+
+								if (typeof token === 'string') {
+									tokens.splice.apply(tokens, [i, 1].concat(replacement));
+								} else {
+									token.content = replacement;
+								}
+							}
+						} else if (token.content /* && typeof token.content !== 'string' */) {
+							walkTokens(token.content);
+						}
+					}
+
+					return tokens;
+				}
+
+				walkTokens(env.tokens);
+			}
+		}
+	});
+
+}(Prism));
+
+(function (Prism) {
+
+	var operators = [
+		// query and projection
+		'$eq', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$and', '$not', '$nor', '$or',
+		'$exists', '$type', '$expr', '$jsonSchema', '$mod', '$regex', '$text', '$where', '$geoIntersects',
+		'$geoWithin', '$near', '$nearSphere', '$all', '$elemMatch', '$size', '$bitsAllClear', '$bitsAllSet',
+		'$bitsAnyClear', '$bitsAnySet', '$comment', '$elemMatch', '$meta', '$slice',
+
+		// update
+		'$currentDate', '$inc', '$min', '$max', '$mul', '$rename', '$set', '$setOnInsert', '$unset',
+		'$addToSet', '$pop', '$pull', '$push', '$pullAll', '$each', '$position', '$slice', '$sort', '$bit',
+
+		// aggregation pipeline stages
+		'$addFields', '$bucket', '$bucketAuto', '$collStats', '$count', '$currentOp', '$facet', '$geoNear',
+		'$graphLookup', '$group', '$indexStats', '$limit', '$listLocalSessions', '$listSessions', '$lookup',
+		'$match', '$merge', '$out', '$planCacheStats', '$project', '$redact', '$replaceRoot', '$replaceWith',
+		'$sample', '$set', '$skip', '$sort', '$sortByCount', '$unionWith', '$unset', '$unwind', '$setWindowFields',
+
+		// aggregation pipeline operators
+		'$abs', '$accumulator', '$acos', '$acosh', '$add', '$addToSet', '$allElementsTrue', '$and',
+		'$anyElementTrue', '$arrayElemAt', '$arrayToObject', '$asin', '$asinh', '$atan', '$atan2',
+		'$atanh', '$avg', '$binarySize', '$bsonSize', '$ceil', '$cmp', '$concat', '$concatArrays', '$cond',
+		'$convert', '$cos', '$dateFromParts', '$dateToParts', '$dateFromString', '$dateToString', '$dayOfMonth',
+		'$dayOfWeek', '$dayOfYear', '$degreesToRadians', '$divide', '$eq', '$exp', '$filter', '$first',
+		'$floor', '$function', '$gt', '$gte', '$hour', '$ifNull', '$in', '$indexOfArray', '$indexOfBytes',
+		'$indexOfCP', '$isArray', '$isNumber', '$isoDayOfWeek', '$isoWeek', '$isoWeekYear', '$last',
+		'$last', '$let', '$literal', '$ln', '$log', '$log10', '$lt', '$lte', '$ltrim', '$map', '$max',
+		'$mergeObjects', '$meta', '$min', '$millisecond', '$minute', '$mod', '$month', '$multiply', '$ne',
+		'$not', '$objectToArray', '$or', '$pow', '$push', '$radiansToDegrees', '$range', '$reduce',
+		'$regexFind', '$regexFindAll', '$regexMatch', '$replaceOne', '$replaceAll', '$reverseArray', '$round',
+		'$rtrim', '$second', '$setDifference', '$setEquals', '$setIntersection', '$setIsSubset', '$setUnion',
+		'$size', '$sin', '$slice', '$split', '$sqrt', '$stdDevPop', '$stdDevSamp', '$strcasecmp', '$strLenBytes',
+		'$strLenCP', '$substr', '$substrBytes', '$substrCP', '$subtract', '$sum', '$switch', '$tan',
+		'$toBool', '$toDate', '$toDecimal', '$toDouble', '$toInt', '$toLong', '$toObjectId', '$toString',
+		'$toLower', '$toUpper', '$trim', '$trunc', '$type', '$week', '$year', '$zip', '$count', '$dateAdd',
+		'$dateDiff', '$dateSubtract', '$dateTrunc', '$getField', '$rand', '$sampleRate', '$setField', '$unsetField',
+
+		// aggregation pipeline query modifiers
+		'$comment', '$explain', '$hint', '$max', '$maxTimeMS', '$min', '$orderby', '$query',
+		'$returnKey', '$showDiskLoc', '$natural',
+	];
+
+	var builtinFunctions = [
+		'ObjectId',
+		'Code',
+		'BinData',
+		'DBRef',
+		'Timestamp',
+		'NumberLong',
+		'NumberDecimal',
+		'MaxKey',
+		'MinKey',
+		'RegExp',
+		'ISODate',
+		'UUID',
+	];
+
+	operators = operators.map(function (operator) {
+		return operator.replace('$', '\\$');
+	});
+
+	var operatorsSource = '(?:' + operators.join('|') + ')\\b';
+
+	Prism.languages.mongodb = Prism.languages.extend('javascript', {});
+
+	Prism.languages.insertBefore('mongodb', 'string', {
+		'property': {
+			pattern: /(?:(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)(?=\s*:)/,
+			greedy: true,
+			inside: {
+				'keyword': RegExp('^([\'"])?' + operatorsSource + '(?:\\1)?$')
+			}
+		}
+	});
+
+	Prism.languages.mongodb.string.inside = {
+		url: {
+			// url pattern
+			pattern: /https?:\/\/[-\w@:%.+~#=]{1,256}\.[a-z0-9()]{1,6}\b[-\w()@:%+.~#?&/=]*/i,
+			greedy: true
+		},
+		entity: {
+			// ipv4
+			pattern: /\b(?:(?:[01]?\d\d?|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d\d?|2[0-4]\d|25[0-5])\b/,
+			greedy: true
+		}
+	};
+
+	Prism.languages.insertBefore('mongodb', 'constant', {
+		'builtin': {
+			pattern: RegExp('\\b(?:' + builtinFunctions.join('|') + ')\\b'),
+			alias: 'keyword'
+		}
+	});
+
+}(Prism));
+
+/**
+ * Original by Aaron Harun: http://aahacreative.com/2012/07/31/php-syntax-highlighting-prism/
+ * Modified by Miles Johnson: http://milesj.me
+ * Rewritten by Tom Pavelec
+ *
+ * Supports PHP 5.3 - 8.0
+ */
+(function (Prism) {
+	var comment = /\/\*[\s\S]*?\*\/|\/\/.*|#(?!\[).*/;
+	var constant = [
+		{
+			pattern: /\b(?:false|true)\b/i,
+			alias: 'boolean'
+		},
+		{
+			pattern: /(::\s*)\b[a-z_]\w*\b(?!\s*\()/i,
+			greedy: true,
+			lookbehind: true,
+		},
+		{
+			pattern: /(\b(?:case|const)\s+)\b[a-z_]\w*(?=\s*[;=])/i,
+			greedy: true,
+			lookbehind: true,
+		},
+		/\b(?:null)\b/i,
+		/\b[A-Z_][A-Z0-9_]*\b(?!\s*\()/,
+	];
+	var number = /\b0b[01]+(?:_[01]+)*\b|\b0o[0-7]+(?:_[0-7]+)*\b|\b0x[\da-f]+(?:_[\da-f]+)*\b|(?:\b\d+(?:_\d+)*\.?(?:\d+(?:_\d+)*)?|\B\.\d+)(?:e[+-]?\d+)?/i;
+	var operator = /<?=>|\?\?=?|\.{3}|\??->|[!=]=?=?|::|\*\*=?|--|\+\+|&&|\|\||<<|>>|[?~]|[/^|%*&<>.+-]=?/;
+	var punctuation = /[{}\[\](),:;]/;
+
+	Prism.languages.php = {
+		'delimiter': {
+			pattern: /\?>$|^<\?(?:php(?=\s)|=)?/i,
+			alias: 'important'
+		},
+		'comment': comment,
+		'variable': /\$+(?:\w+\b|(?=\{))/,
+		'package': {
+			pattern: /(namespace\s+|use\s+(?:function\s+)?)(?:\\?\b[a-z_]\w*)+\b(?!\\)/i,
+			lookbehind: true,
+			inside: {
+				'punctuation': /\\/
+			}
+		},
+		'class-name-definition': {
+			pattern: /(\b(?:class|enum|interface|trait)\s+)\b[a-z_]\w*(?!\\)\b/i,
+			lookbehind: true,
+			alias: 'class-name'
+		},
+		'function-definition': {
+			pattern: /(\bfunction\s+)[a-z_]\w*(?=\s*\()/i,
+			lookbehind: true,
+			alias: 'function'
+		},
+		'keyword': [
+			{
+				pattern: /(\(\s*)\b(?:array|bool|boolean|float|int|integer|object|string)\b(?=\s*\))/i,
+				alias: 'type-casting',
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /([(,?]\s*)\b(?:array(?!\s*\()|bool|callable|(?:false|null)(?=\s*\|)|float|int|iterable|mixed|object|self|static|string)\b(?=\s*\$)/i,
+				alias: 'type-hint',
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /(\)\s*:\s*(?:\?\s*)?)\b(?:array(?!\s*\()|bool|callable|(?:false|null)(?=\s*\|)|float|int|iterable|mixed|never|object|self|static|string|void)\b/i,
+				alias: 'return-type',
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /\b(?:array(?!\s*\()|bool|float|int|iterable|mixed|object|string|void)\b/i,
+				alias: 'type-declaration',
+				greedy: true
+			},
+			{
+				pattern: /(\|\s*)(?:false|null)\b|\b(?:false|null)(?=\s*\|)/i,
+				alias: 'type-declaration',
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /\b(?:parent|self|static)(?=\s*::)/i,
+				alias: 'static-context',
+				greedy: true
+			},
+			{
+				// yield from
+				pattern: /(\byield\s+)from\b/i,
+				lookbehind: true
+			},
+			// `class` is always a keyword unlike other keywords
+			/\bclass\b/i,
+			{
+				// https://www.php.net/manual/en/reserved.keywords.php
+				//
+				// keywords cannot be preceded by "->"
+				// the complex lookbehind means `(?<!(?:->|::)\s*)`
+				pattern: /((?:^|[^\s>:]|(?:^|[^-])>|(?:^|[^:]):)\s*)\b(?:abstract|and|array|as|break|callable|case|catch|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|enum|eval|exit|extends|final|finally|fn|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|match|namespace|never|new|or|parent|print|private|protected|public|readonly|require|require_once|return|self|static|switch|throw|trait|try|unset|use|var|while|xor|yield|__halt_compiler)\b/i,
+				lookbehind: true
+			}
+		],
+		'argument-name': {
+			pattern: /([(,]\s*)\b[a-z_]\w*(?=\s*:(?!:))/i,
+			lookbehind: true
+		},
+		'class-name': [
+			{
+				pattern: /(\b(?:extends|implements|instanceof|new(?!\s+self|\s+static))\s+|\bcatch\s*\()\b[a-z_]\w*(?!\\)\b/i,
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /(\|\s*)\b[a-z_]\w*(?!\\)\b/i,
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /\b[a-z_]\w*(?!\\)\b(?=\s*\|)/i,
+				greedy: true
+			},
+			{
+				pattern: /(\|\s*)(?:\\?\b[a-z_]\w*)+\b/i,
+				alias: 'class-name-fully-qualified',
+				greedy: true,
+				lookbehind: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			},
+			{
+				pattern: /(?:\\?\b[a-z_]\w*)+\b(?=\s*\|)/i,
+				alias: 'class-name-fully-qualified',
+				greedy: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			},
+			{
+				pattern: /(\b(?:extends|implements|instanceof|new(?!\s+self\b|\s+static\b))\s+|\bcatch\s*\()(?:\\?\b[a-z_]\w*)+\b(?!\\)/i,
+				alias: 'class-name-fully-qualified',
+				greedy: true,
+				lookbehind: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			},
+			{
+				pattern: /\b[a-z_]\w*(?=\s*\$)/i,
+				alias: 'type-declaration',
+				greedy: true
+			},
+			{
+				pattern: /(?:\\?\b[a-z_]\w*)+(?=\s*\$)/i,
+				alias: ['class-name-fully-qualified', 'type-declaration'],
+				greedy: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			},
+			{
+				pattern: /\b[a-z_]\w*(?=\s*::)/i,
+				alias: 'static-context',
+				greedy: true
+			},
+			{
+				pattern: /(?:\\?\b[a-z_]\w*)+(?=\s*::)/i,
+				alias: ['class-name-fully-qualified', 'static-context'],
+				greedy: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			},
+			{
+				pattern: /([(,?]\s*)[a-z_]\w*(?=\s*\$)/i,
+				alias: 'type-hint',
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /([(,?]\s*)(?:\\?\b[a-z_]\w*)+(?=\s*\$)/i,
+				alias: ['class-name-fully-qualified', 'type-hint'],
+				greedy: true,
+				lookbehind: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			},
+			{
+				pattern: /(\)\s*:\s*(?:\?\s*)?)\b[a-z_]\w*(?!\\)\b/i,
+				alias: 'return-type',
+				greedy: true,
+				lookbehind: true
+			},
+			{
+				pattern: /(\)\s*:\s*(?:\?\s*)?)(?:\\?\b[a-z_]\w*)+\b(?!\\)/i,
+				alias: ['class-name-fully-qualified', 'return-type'],
+				greedy: true,
+				lookbehind: true,
+				inside: {
+					'punctuation': /\\/
+				}
+			}
+		],
+		'constant': constant,
+		'function': {
+			pattern: /(^|[^\\\w])\\?[a-z_](?:[\w\\]*\w)?(?=\s*\()/i,
+			lookbehind: true,
+			inside: {
+				'punctuation': /\\/
+			}
+		},
+		'property': {
+			pattern: /(->\s*)\w+/,
+			lookbehind: true
+		},
+		'number': number,
+		'operator': operator,
+		'punctuation': punctuation
+	};
+
+	var string_interpolation = {
+		pattern: /\{\$(?:\{(?:\{[^{}]+\}|[^{}]+)\}|[^{}])+\}|(^|[^\\{])\$+(?:\w+(?:\[[^\r\n\[\]]+\]|->\w+)?)/,
+		lookbehind: true,
+		inside: Prism.languages.php
+	};
+
+	var string = [
+		{
+			pattern: /<<<'([^']+)'[\r\n](?:.*[\r\n])*?\1;/,
+			alias: 'nowdoc-string',
+			greedy: true,
+			inside: {
+				'delimiter': {
+					pattern: /^<<<'[^']+'|[a-z_]\w*;$/i,
+					alias: 'symbol',
+					inside: {
+						'punctuation': /^<<<'?|[';]$/
+					}
+				}
+			}
+		},
+		{
+			pattern: /<<<(?:"([^"]+)"[\r\n](?:.*[\r\n])*?\1;|([a-z_]\w*)[\r\n](?:.*[\r\n])*?\2;)/i,
+			alias: 'heredoc-string',
+			greedy: true,
+			inside: {
+				'delimiter': {
+					pattern: /^<<<(?:"[^"]+"|[a-z_]\w*)|[a-z_]\w*;$/i,
+					alias: 'symbol',
+					inside: {
+						'punctuation': /^<<<"?|[";]$/
+					}
+				},
+				'interpolation': string_interpolation
+			}
+		},
+		{
+			pattern: /`(?:\\[\s\S]|[^\\`])*`/,
+			alias: 'backtick-quoted-string',
+			greedy: true
+		},
+		{
+			pattern: /'(?:\\[\s\S]|[^\\'])*'/,
+			alias: 'single-quoted-string',
+			greedy: true
+		},
+		{
+			pattern: /"(?:\\[\s\S]|[^\\"])*"/,
+			alias: 'double-quoted-string',
+			greedy: true,
+			inside: {
+				'interpolation': string_interpolation
+			}
+		}
+	];
+
+	Prism.languages.insertBefore('php', 'variable', {
+		'string': string,
+		'attribute': {
+			pattern: /#\[(?:[^"'\/#]|\/(?![*/])|\/\/.*$|#(?!\[).*$|\/\*(?:[^*]|\*(?!\/))*\*\/|"(?:\\[\s\S]|[^\\"])*"|'(?:\\[\s\S]|[^\\'])*')+\](?=\s*[a-z$#])/im,
+			greedy: true,
+			inside: {
+				'attribute-content': {
+					pattern: /^(#\[)[\s\S]+(?=\]$)/,
+					lookbehind: true,
+					// inside can appear subset of php
+					inside: {
+						'comment': comment,
+						'string': string,
+						'attribute-class-name': [
+							{
+								pattern: /([^:]|^)\b[a-z_]\w*(?!\\)\b/i,
+								alias: 'class-name',
+								greedy: true,
+								lookbehind: true
+							},
+							{
+								pattern: /([^:]|^)(?:\\?\b[a-z_]\w*)+/i,
+								alias: [
+									'class-name',
+									'class-name-fully-qualified'
+								],
+								greedy: true,
+								lookbehind: true,
+								inside: {
+									'punctuation': /\\/
+								}
+							}
+						],
+						'constant': constant,
+						'number': number,
+						'operator': operator,
+						'punctuation': punctuation
+					}
+				},
+				'delimiter': {
+					pattern: /^#\[|\]$/,
+					alias: 'punctuation'
+				}
+			}
+		},
+	});
+
+	Prism.hooks.add('before-tokenize', function (env) {
+		if (!/<\?/.test(env.code)) {
+			return;
+		}
+
+		var phpPattern = /<\?(?:[^"'/#]|\/(?![*/])|("|')(?:\\[\s\S]|(?!\1)[^\\])*\1|(?:\/\/|#(?!\[))(?:[^?\n\r]|\?(?!>))*(?=$|\?>|[\r\n])|#\[|\/\*(?:[^*]|\*(?!\/))*(?:\*\/|$))*?(?:\?>|$)/g;
+		Prism.languages['markup-templating'].buildPlaceholders(env, 'php', phpPattern);
+	});
+
+	Prism.hooks.add('after-tokenize', function (env) {
+		Prism.languages['markup-templating'].tokenizePlaceholders(env, 'php');
+	});
+
+}(Prism));
+
+(function (Prism) {
+
 	var powershell = Prism.languages.powershell = {
 		'comment': [
 			{
@@ -3922,229 +4369,6 @@ Prism.languages.r = {
 	'operator': /->?>?|<(?:=|<?-)?|[>=!]=?|::?|&&?|\|\|?|[+*\/^$@~]/,
 	'punctuation': /[(){}\[\],;]/
 };
-
-(function (Prism) {
-
-	var javascript = Prism.util.clone(Prism.languages.javascript);
-
-	var space = /(?:\s|\/\/.*(?!.)|\/\*(?:[^*]|\*(?!\/))\*\/)/.source;
-	var braces = /(?:\{(?:\{(?:\{[^{}]*\}|[^{}])*\}|[^{}])*\})/.source;
-	var spread = /(?:\{<S>*\.{3}(?:[^{}]|<BRACES>)*\})/.source;
-
-	/**
-	 * @param {string} source
-	 * @param {string} [flags]
-	 */
-	function re(source, flags) {
-		source = source
-			.replace(/<S>/g, function () { return space; })
-			.replace(/<BRACES>/g, function () { return braces; })
-			.replace(/<SPREAD>/g, function () { return spread; });
-		return RegExp(source, flags);
-	}
-
-	spread = re(spread).source;
-
-
-	Prism.languages.jsx = Prism.languages.extend('markup', javascript);
-	Prism.languages.jsx.tag.pattern = re(
-		/<\/?(?:[\w.:-]+(?:<S>+(?:[\w.:$-]+(?:=(?:"(?:\\[\s\S]|[^\\"])*"|'(?:\\[\s\S]|[^\\'])*'|[^\s{'"/>=]+|<BRACES>))?|<SPREAD>))*<S>*\/?)?>/.source
-	);
-
-	Prism.languages.jsx.tag.inside['tag'].pattern = /^<\/?[^\s>\/]*/;
-	Prism.languages.jsx.tag.inside['attr-value'].pattern = /=(?!\{)(?:"(?:\\[\s\S]|[^\\"])*"|'(?:\\[\s\S]|[^\\'])*'|[^\s'">]+)/;
-	Prism.languages.jsx.tag.inside['tag'].inside['class-name'] = /^[A-Z]\w*(?:\.[A-Z]\w*)*$/;
-	Prism.languages.jsx.tag.inside['comment'] = javascript['comment'];
-
-	Prism.languages.insertBefore('inside', 'attr-name', {
-		'spread': {
-			pattern: re(/<SPREAD>/.source),
-			inside: Prism.languages.jsx
-		}
-	}, Prism.languages.jsx.tag);
-
-	Prism.languages.insertBefore('inside', 'special-attr', {
-		'script': {
-			// Allow for two levels of nesting
-			pattern: re(/=<BRACES>/.source),
-			alias: 'language-javascript',
-			inside: {
-				'script-punctuation': {
-					pattern: /^=(?=\{)/,
-					alias: 'punctuation'
-				},
-				rest: Prism.languages.jsx
-			},
-		}
-	}, Prism.languages.jsx.tag);
-
-	// The following will handle plain text inside tags
-	var stringifyToken = function (token) {
-		if (!token) {
-			return '';
-		}
-		if (typeof token === 'string') {
-			return token;
-		}
-		if (typeof token.content === 'string') {
-			return token.content;
-		}
-		return token.content.map(stringifyToken).join('');
-	};
-
-	var walkTokens = function (tokens) {
-		var openedTags = [];
-		for (var i = 0; i < tokens.length; i++) {
-			var token = tokens[i];
-			var notTagNorBrace = false;
-
-			if (typeof token !== 'string') {
-				if (token.type === 'tag' && token.content[0] && token.content[0].type === 'tag') {
-					// We found a tag, now find its kind
-
-					if (token.content[0].content[0].content === '</') {
-						// Closing tag
-						if (openedTags.length > 0 && openedTags[openedTags.length - 1].tagName === stringifyToken(token.content[0].content[1])) {
-							// Pop matching opening tag
-							openedTags.pop();
-						}
-					} else {
-						if (token.content[token.content.length - 1].content === '/>') {
-							// Autoclosed tag, ignore
-						} else {
-							// Opening tag
-							openedTags.push({
-								tagName: stringifyToken(token.content[0].content[1]),
-								openedBraces: 0
-							});
-						}
-					}
-				} else if (openedTags.length > 0 && token.type === 'punctuation' && token.content === '{') {
-
-					// Here we might have entered a JSX context inside a tag
-					openedTags[openedTags.length - 1].openedBraces++;
-
-				} else if (openedTags.length > 0 && openedTags[openedTags.length - 1].openedBraces > 0 && token.type === 'punctuation' && token.content === '}') {
-
-					// Here we might have left a JSX context inside a tag
-					openedTags[openedTags.length - 1].openedBraces--;
-
-				} else {
-					notTagNorBrace = true;
-				}
-			}
-			if (notTagNorBrace || typeof token === 'string') {
-				if (openedTags.length > 0 && openedTags[openedTags.length - 1].openedBraces === 0) {
-					// Here we are inside a tag, and not inside a JSX context.
-					// That's plain text: drop any tokens matched.
-					var plainText = stringifyToken(token);
-
-					// And merge text with adjacent text
-					if (i < tokens.length - 1 && (typeof tokens[i + 1] === 'string' || tokens[i + 1].type === 'plain-text')) {
-						plainText += stringifyToken(tokens[i + 1]);
-						tokens.splice(i + 1, 1);
-					}
-					if (i > 0 && (typeof tokens[i - 1] === 'string' || tokens[i - 1].type === 'plain-text')) {
-						plainText = stringifyToken(tokens[i - 1]) + plainText;
-						tokens.splice(i - 1, 1);
-						i--;
-					}
-
-					tokens[i] = new Prism.Token('plain-text', plainText, null, plainText);
-				}
-			}
-
-			if (token.content && typeof token.content !== 'string') {
-				walkTokens(token.content);
-			}
-		}
-	};
-
-	Prism.hooks.add('after-tokenize', function (env) {
-		if (env.language !== 'jsx' && env.language !== 'tsx') {
-			return;
-		}
-		walkTokens(env.tokens);
-	});
-
-}(Prism));
-
-(function (Prism) {
-
-	Prism.languages.typescript = Prism.languages.extend('javascript', {
-		'class-name': {
-			pattern: /(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,
-			lookbehind: true,
-			greedy: true,
-			inside: null // see below
-		},
-		'builtin': /\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/,
-	});
-
-	// The keywords TypeScript adds to JavaScript
-	Prism.languages.typescript.keyword.push(
-		/\b(?:abstract|declare|is|keyof|readonly|require)\b/,
-		// keywords that have to be followed by an identifier
-		/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,
-		// This is for `import type *, {}`
-		/\btype\b(?=\s*(?:[\{*]|$))/
-	);
-
-	// doesn't work with TS because TS is too complex
-	delete Prism.languages.typescript['parameter'];
-	delete Prism.languages.typescript['literal-property'];
-
-	// a version of typescript specifically for highlighting types
-	var typeInside = Prism.languages.extend('typescript', {});
-	delete typeInside['class-name'];
-
-	Prism.languages.typescript['class-name'].inside = typeInside;
-
-	Prism.languages.insertBefore('typescript', 'function', {
-		'decorator': {
-			pattern: /@[$\w\xA0-\uFFFF]+/,
-			inside: {
-				'at': {
-					pattern: /^@/,
-					alias: 'operator'
-				},
-				'function': /^[\s\S]+/
-			}
-		},
-		'generic-function': {
-			// e.g. foo<T extends "bar" | "baz">( ...
-			pattern: /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,
-			greedy: true,
-			inside: {
-				'function': /^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,
-				'generic': {
-					pattern: /<[\s\S]+/, // everything after the first <
-					alias: 'class-name',
-					inside: typeInside
-				}
-			}
-		}
-	});
-
-	Prism.languages.ts = Prism.languages.typescript;
-
-}(Prism));
-
-(function (Prism) {
-	var typescript = Prism.util.clone(Prism.languages.typescript);
-	Prism.languages.tsx = Prism.languages.extend('jsx', typescript);
-
-	// doesn't work with TS because TS is too complex
-	delete Prism.languages.tsx['parameter'];
-	delete Prism.languages.tsx['literal-property'];
-
-	// This will prevent collisions between TSX tags and TS generic types.
-	// Idea by https://github.com/karlhorky
-	// Discussion: https://github.com/PrismJS/prism/issues/2594#issuecomment-710666928
-	var tag = Prism.languages.tsx.tag;
-	tag.pattern = RegExp(/(^|[^\w$]|(?=<\/))/.source + '(?:' + tag.pattern.source + ')', tag.pattern.flags);
-	tag.lookbehind = true;
-}(Prism));
 
 (function (Prism) {
 	Prism.languages.sass = Prism.languages.extend('css', {
@@ -4377,6 +4601,31 @@ Prism.languages.scss['atrule'].inside.rest = Prism.languages.scss;
 
 }(Prism));
 
+Prism.languages['splunk-spl'] = {
+	'comment': /`comment\("(?:\\.|[^\\"])*"\)`/,
+	'string': {
+		pattern: /"(?:\\.|[^\\"])*"/,
+		greedy: true
+	},
+	// https://docs.splunk.com/Documentation/Splunk/7.3.0/SearchReference/ListOfSearchCommands
+	'keyword': /\b(?:abstract|accum|addcoltotals|addinfo|addtotals|analyzefields|anomalies|anomalousvalue|anomalydetection|append|appendcols|appendcsv|appendlookup|appendpipe|arules|associate|audit|autoregress|bin|bucket|bucketdir|chart|cluster|cofilter|collect|concurrency|contingency|convert|correlate|datamodel|dbinspect|dedup|delete|delta|diff|erex|eval|eventcount|eventstats|extract|fieldformat|fields|fieldsummary|filldown|fillnull|findtypes|folderize|foreach|format|from|gauge|gentimes|geom|geomfilter|geostats|head|highlight|history|iconify|input|inputcsv|inputlookup|iplocation|join|kmeans|kv|kvform|loadjob|localize|localop|lookup|makecontinuous|makemv|makeresults|map|mcollect|metadata|metasearch|meventcollect|mstats|multikv|multisearch|mvcombine|mvexpand|nomv|outlier|outputcsv|outputlookup|outputtext|overlap|pivot|predict|rangemap|rare|regex|relevancy|reltime|rename|replace|rest|return|reverse|rex|rtorder|run|savedsearch|script|scrub|search|searchtxn|selfjoin|sendemail|set|setfields|sichart|sirare|sistats|sitimechart|sitop|sort|spath|stats|strcat|streamstats|table|tags|tail|timechart|timewrap|top|transaction|transpose|trendline|tscollect|tstats|typeahead|typelearner|typer|union|uniq|untable|where|x11|xmlkv|xmlunescape|xpath|xyseries)\b/i,
+	'operator-word': {
+		pattern: /\b(?:and|as|by|not|or|xor)\b/i,
+		alias: 'operator'
+	},
+	'function': /\b\w+(?=\s*\()/,
+	'property': /\b\w+(?=\s*=(?!=))/,
+	'date': {
+		// MM/DD/YYYY(:HH:MM:SS)?
+		pattern: /\b\d{1,2}\/\d{1,2}\/\d{1,4}(?:(?::\d{1,2}){3})?\b/,
+		alias: 'number'
+	},
+	'number': /\b\d+(?:\.\d+)?\b/,
+	'boolean': /\b(?:f|false|t|true)\b/i,
+	'operator': /[<>=]=?|[-+*/%|]/,
+	'punctuation': /[()[\],]/
+};
+
 Prism.languages.sql = {
 	'comment': {
 		pattern: /(^|[^\\])(?:\/\*[\s\S]*?\*\/|(?:--|\/\/|#).*)/,
@@ -4412,123 +4661,62 @@ Prism.languages.sql = {
 
 (function (Prism) {
 
-	var keywords = /\b(?:ACT|ACTIFSUB|CARRAY|CASE|CLEARGIF|COA|COA_INT|CONSTANTS|CONTENT|CUR|EDITPANEL|EFFECT|EXT|FILE|FLUIDTEMPLATE|FORM|FRAME|FRAMESET|GIFBUILDER|GMENU|GMENU_FOLDOUT|GMENU_LAYERS|GP|HMENU|HRULER|HTML|IENV|IFSUB|IMAGE|IMGMENU|IMGMENUITEM|IMGTEXT|IMG_RESOURCE|INCLUDE_TYPOSCRIPT|JSMENU|JSMENUITEM|LLL|LOAD_REGISTER|NO|PAGE|RECORDS|RESTORE_REGISTER|TEMPLATE|TEXT|TMENU|TMENUITEM|TMENU_LAYERS|USER|USER_INT|_GIFBUILDER|global|globalString|globalVar)\b/;
-
-	Prism.languages.typoscript = {
-		'comment': [
-			{
-				// multiline comments /* */
-				pattern: /(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,
-				lookbehind: true
-			},
-			{
-				// double-slash comments - ignored when backslashes or colon is found in front
-				// also ignored whenever directly after an equal-sign, because it would probably be an url without protocol
-				pattern: /(^|[^\\:= \t]|(?:^|[^= \t])[ \t]+)\/\/.*/,
-				lookbehind: true,
-				greedy: true
-			},
-			{
-				// hash comments - ignored when leading quote is found for hex colors in strings
-				pattern: /(^|[^"'])#.*/,
-				lookbehind: true,
-				greedy: true
-			}
-		],
-		'function': [
-			{
-				// old include style
-				pattern: /<INCLUDE_TYPOSCRIPT:\s*source\s*=\s*(?:"[^"\r\n]*"|'[^'\r\n]*')\s*>/,
-				inside: {
-					'string': {
-						pattern: /"[^"\r\n]*"|'[^'\r\n]*'/,
-						inside: {
-							'keyword': keywords,
-						},
-					},
-					'keyword': {
-						pattern: /INCLUDE_TYPOSCRIPT/,
-					},
-				},
-			},
-			{
-				// new include style
-				pattern: /@import\s*(?:"[^"\r\n]*"|'[^'\r\n]*')/,
-				inside: {
-					'string': /"[^"\r\n]*"|'[^'\r\n]*'/,
-				},
-			}
-		],
-		'string': {
-			pattern: /^([^=]*=[< ]?)(?:(?!\]\n).)*/,
+	Prism.languages.typescript = Prism.languages.extend('javascript', {
+		'class-name': {
+			pattern: /(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,
 			lookbehind: true,
+			greedy: true,
+			inside: null // see below
+		},
+		'builtin': /\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/,
+	});
+
+	// The keywords TypeScript adds to JavaScript
+	Prism.languages.typescript.keyword.push(
+		/\b(?:abstract|declare|is|keyof|readonly|require)\b/,
+		// keywords that have to be followed by an identifier
+		/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,
+		// This is for `import type *, {}`
+		/\btype\b(?=\s*(?:[\{*]|$))/
+	);
+
+	// doesn't work with TS because TS is too complex
+	delete Prism.languages.typescript['parameter'];
+	delete Prism.languages.typescript['literal-property'];
+
+	// a version of typescript specifically for highlighting types
+	var typeInside = Prism.languages.extend('typescript', {});
+	delete typeInside['class-name'];
+
+	Prism.languages.typescript['class-name'].inside = typeInside;
+
+	Prism.languages.insertBefore('typescript', 'function', {
+		'decorator': {
+			pattern: /@[$\w\xA0-\uFFFF]+/,
 			inside: {
-				'function': /\{\$.*\}/, // constants include
-				'keyword': keywords,
-				'number': /^\d+$/,
-				'punctuation': /[,|:]/,
+				'at': {
+					pattern: /^@/,
+					alias: 'operator'
+				},
+				'function': /^[\s\S]+/
 			}
 		},
-		'keyword': keywords,
-		'number': {
-			// special highlighting for indexes of arrays in tags
-			pattern: /\b\d+\s*[.{=]/,
+		'generic-function': {
+			// e.g. foo<T extends "bar" | "baz">( ...
+			pattern: /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,
+			greedy: true,
 			inside: {
-				'operator': /[.{=]/,
+				'function': /^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,
+				'generic': {
+					pattern: /<[\s\S]+/, // everything after the first <
+					alias: 'class-name',
+					inside: typeInside
+				}
 			}
-		},
-		'tag': {
-			pattern: /\.?[-\w\\]+\.?/,
-			inside: {
-				'punctuation': /\./,
-			}
-		},
-		'punctuation': /[{}[\];(),.:|]/,
-		'operator': /[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,
-	};
-
-	Prism.languages.tsconfig = Prism.languages.typoscript;
-
-}(Prism));
-
-(function (Prism) {
-
-	/**
-	 * If the given language is present, it will insert the given doc comment grammar token into it.
-	 *
-	 * @param {string} lang
-	 * @param {any} docComment
-	 */
-	function insertDocComment(lang, docComment) {
-		if (Prism.languages[lang]) {
-			Prism.languages.insertBefore(lang, 'comment', {
-				'doc-comment': docComment
-			});
 		}
-	}
+	});
 
-	var tag = Prism.languages.markup.tag;
-
-	var slashDocComment = {
-		pattern: /\/\/\/.*/,
-		greedy: true,
-		alias: 'comment',
-		inside: {
-			'tag': tag
-		}
-	};
-	var tickDocComment = {
-		pattern: /'''.*/,
-		greedy: true,
-		alias: 'comment',
-		inside: {
-			'tag': tag
-		}
-	};
-
-	insertDocComment('csharp', slashDocComment);
-	insertDocComment('fsharp', slashDocComment);
-	insertDocComment('vbnet', tickDocComment);
+	Prism.languages.ts = Prism.languages.typescript;
 
 }(Prism));
 
@@ -4615,821 +4803,6 @@ Prism.languages.sql = {
 	Prism.languages.yml = Prism.languages.yaml;
 
 }(Prism));
-
-(function () {
-
-	if (typeof Prism === 'undefined' || typeof document === 'undefined') {
-		return;
-	}
-
-	/**
-	 * Plugin name which is used as a class name for <pre> which is activating the plugin
-	 *
-	 * @type {string}
-	 */
-	var PLUGIN_NAME = 'line-numbers';
-
-	/**
-	 * Regular expression used for determining line breaks
-	 *
-	 * @type {RegExp}
-	 */
-	var NEW_LINE_EXP = /\n(?!$)/g;
-
-
-	/**
-	 * Global exports
-	 */
-	var config = Prism.plugins.lineNumbers = {
-		/**
-		 * Get node for provided line number
-		 *
-		 * @param {Element} element pre element
-		 * @param {number} number line number
-		 * @returns {Element|undefined}
-		 */
-		getLine: function (element, number) {
-			if (element.tagName !== 'PRE' || !element.classList.contains(PLUGIN_NAME)) {
-				return;
-			}
-
-			var lineNumberRows = element.querySelector('.line-numbers-rows');
-			if (!lineNumberRows) {
-				return;
-			}
-			var lineNumberStart = parseInt(element.getAttribute('data-start'), 10) || 1;
-			var lineNumberEnd = lineNumberStart + (lineNumberRows.children.length - 1);
-
-			if (number < lineNumberStart) {
-				number = lineNumberStart;
-			}
-			if (number > lineNumberEnd) {
-				number = lineNumberEnd;
-			}
-
-			var lineIndex = number - lineNumberStart;
-
-			return lineNumberRows.children[lineIndex];
-		},
-
-		/**
-		 * Resizes the line numbers of the given element.
-		 *
-		 * This function will not add line numbers. It will only resize existing ones.
-		 *
-		 * @param {HTMLElement} element A `<pre>` element with line numbers.
-		 * @returns {void}
-		 */
-		resize: function (element) {
-			resizeElements([element]);
-		},
-
-		/**
-		 * Whether the plugin can assume that the units font sizes and margins are not depended on the size of
-		 * the current viewport.
-		 *
-		 * Setting this to `true` will allow the plugin to do certain optimizations for better performance.
-		 *
-		 * Set this to `false` if you use any of the following CSS units: `vh`, `vw`, `vmin`, `vmax`.
-		 *
-		 * @type {boolean}
-		 */
-		assumeViewportIndependence: true
-	};
-
-	/**
-	 * Resizes the given elements.
-	 *
-	 * @param {HTMLElement[]} elements
-	 */
-	function resizeElements(elements) {
-		elements = elements.filter(function (e) {
-			var codeStyles = getStyles(e);
-			var whiteSpace = codeStyles['white-space'];
-			return whiteSpace === 'pre-wrap' || whiteSpace === 'pre-line';
-		});
-
-		if (elements.length == 0) {
-			return;
-		}
-
-		var infos = elements.map(function (element) {
-			var codeElement = element.querySelector('code');
-			var lineNumbersWrapper = element.querySelector('.line-numbers-rows');
-			if (!codeElement || !lineNumbersWrapper) {
-				return undefined;
-			}
-
-			/** @type {HTMLElement} */
-			var lineNumberSizer = element.querySelector('.line-numbers-sizer');
-			var codeLines = codeElement.textContent.split(NEW_LINE_EXP);
-
-			if (!lineNumberSizer) {
-				lineNumberSizer = document.createElement('span');
-				lineNumberSizer.className = 'line-numbers-sizer';
-
-				codeElement.appendChild(lineNumberSizer);
-			}
-
-			lineNumberSizer.innerHTML = '0';
-			lineNumberSizer.style.display = 'block';
-
-			var oneLinerHeight = lineNumberSizer.getBoundingClientRect().height;
-			lineNumberSizer.innerHTML = '';
-
-			return {
-				element: element,
-				lines: codeLines,
-				lineHeights: [],
-				oneLinerHeight: oneLinerHeight,
-				sizer: lineNumberSizer,
-			};
-		}).filter(Boolean);
-
-		infos.forEach(function (info) {
-			var lineNumberSizer = info.sizer;
-			var lines = info.lines;
-			var lineHeights = info.lineHeights;
-			var oneLinerHeight = info.oneLinerHeight;
-
-			lineHeights[lines.length - 1] = undefined;
-			lines.forEach(function (line, index) {
-				if (line && line.length > 1) {
-					var e = lineNumberSizer.appendChild(document.createElement('span'));
-					e.style.display = 'block';
-					e.textContent = line;
-				} else {
-					lineHeights[index] = oneLinerHeight;
-				}
-			});
-		});
-
-		infos.forEach(function (info) {
-			var lineNumberSizer = info.sizer;
-			var lineHeights = info.lineHeights;
-
-			var childIndex = 0;
-			for (var i = 0; i < lineHeights.length; i++) {
-				if (lineHeights[i] === undefined) {
-					lineHeights[i] = lineNumberSizer.children[childIndex++].getBoundingClientRect().height;
-				}
-			}
-		});
-
-		infos.forEach(function (info) {
-			var lineNumberSizer = info.sizer;
-			var wrapper = info.element.querySelector('.line-numbers-rows');
-
-			lineNumberSizer.style.display = 'none';
-			lineNumberSizer.innerHTML = '';
-
-			info.lineHeights.forEach(function (height, lineNumber) {
-				wrapper.children[lineNumber].style.height = height + 'px';
-			});
-		});
-	}
-
-	/**
-	 * Returns style declarations for the element
-	 *
-	 * @param {Element} element
-	 */
-	function getStyles(element) {
-		if (!element) {
-			return null;
-		}
-
-		return window.getComputedStyle ? getComputedStyle(element) : (element.currentStyle || null);
-	}
-
-	var lastWidth = undefined;
-	window.addEventListener('resize', function () {
-		if (config.assumeViewportIndependence && lastWidth === window.innerWidth) {
-			return;
-		}
-		lastWidth = window.innerWidth;
-
-		resizeElements(Array.prototype.slice.call(document.querySelectorAll('pre.' + PLUGIN_NAME)));
-	});
-
-	Prism.hooks.add('complete', function (env) {
-		if (!env.code) {
-			return;
-		}
-
-		var code = /** @type {Element} */ (env.element);
-		var pre = /** @type {HTMLElement} */ (code.parentNode);
-
-		// works only for <code> wrapped inside <pre> (not inline)
-		if (!pre || !/pre/i.test(pre.nodeName)) {
-			return;
-		}
-
-		// Abort if line numbers already exists
-		if (code.querySelector('.line-numbers-rows')) {
-			return;
-		}
-
-		// only add line numbers if <code> or one of its ancestors has the `line-numbers` class
-		if (!Prism.util.isActive(code, PLUGIN_NAME)) {
-			return;
-		}
-
-		// Remove the class 'line-numbers' from the <code>
-		code.classList.remove(PLUGIN_NAME);
-		// Add the class 'line-numbers' to the <pre>
-		pre.classList.add(PLUGIN_NAME);
-
-		var match = env.code.match(NEW_LINE_EXP);
-		var linesNum = match ? match.length + 1 : 1;
-		var lineNumbersWrapper;
-
-		var lines = new Array(linesNum + 1).join('<span></span>');
-
-		lineNumbersWrapper = document.createElement('span');
-		lineNumbersWrapper.setAttribute('aria-hidden', 'true');
-		lineNumbersWrapper.className = 'line-numbers-rows';
-		lineNumbersWrapper.innerHTML = lines;
-
-		if (pre.hasAttribute('data-start')) {
-			pre.style.counterReset = 'linenumber ' + (parseInt(pre.getAttribute('data-start'), 10) - 1);
-		}
-
-		env.element.appendChild(lineNumbersWrapper);
-
-		resizeElements([pre]);
-
-		Prism.hooks.run('line-numbers', env);
-	});
-
-	Prism.hooks.add('line-numbers', function (env) {
-		env.plugins = env.plugins || {};
-		env.plugins.lineNumbers = true;
-	});
-
-}());
-
-(function () {
-
-	if (typeof Prism === 'undefined') {
-		return;
-	}
-
-	var url = /\b([a-z]{3,7}:\/\/|tel:)[\w\-+%~/.:=&!$'()*,;@]+(?:\?[\w\-+%~/.:=?&!$'()*,;@]*)?(?:#[\w\-+%~/.:#=?&!$'()*,;@]*)?/;
-	var email = /\b\S+@[\w.]+[a-z]{2}/;
-	var linkMd = /\[([^\]]+)\]\(([^)]+)\)/;
-
-	// Tokens that may contain URLs and emails
-	var candidates = ['comment', 'url', 'attr-value', 'string'];
-
-	Prism.plugins.autolinker = {
-		processGrammar: function (grammar) {
-			// Abort if grammar has already been processed
-			if (!grammar || grammar['url-link']) {
-				return;
-			}
-			Prism.languages.DFS(grammar, function (key, def, type) {
-				if (candidates.indexOf(type) > -1 && !Array.isArray(def)) {
-					if (!def.pattern) {
-						def = this[key] = {
-							pattern: def
-						};
-					}
-
-					def.inside = def.inside || {};
-
-					if (type == 'comment') {
-						def.inside['md-link'] = linkMd;
-					}
-					if (type == 'attr-value') {
-						Prism.languages.insertBefore('inside', 'punctuation', { 'url-link': url }, def);
-					} else {
-						def.inside['url-link'] = url;
-					}
-
-					def.inside['email-link'] = email;
-				}
-			});
-			grammar['url-link'] = url;
-			grammar['email-link'] = email;
-		}
-	};
-
-	Prism.hooks.add('before-highlight', function (env) {
-		Prism.plugins.autolinker.processGrammar(env.grammar);
-	});
-
-	Prism.hooks.add('wrap', function (env) {
-		if (/-link$/.test(env.type)) {
-			env.tag = 'a';
-
-			var href = env.content;
-
-			if (env.type == 'email-link' && href.indexOf('mailto:') != 0) {
-				href = 'mailto:' + href;
-			} else if (env.type == 'md-link') {
-				// Markdown
-				var match = env.content.match(linkMd);
-
-				href = match[2];
-				env.content = match[1];
-			}
-
-			env.attributes.href = href;
-
-			// Silently catch any error thrown by decodeURIComponent (#1186)
-			try {
-				env.content = decodeURIComponent(env.content);
-			} catch (e) { /* noop */ }
-		}
-	});
-
-}());
-
-(function () {
-
-	if (typeof Prism === 'undefined') {
-		return;
-	}
-
-	Prism.hooks.add('wrap', function (env) {
-		if (env.type !== 'keyword') {
-			return;
-		}
-		env.classes.push('keyword-' + env.content);
-	});
-
-}());
-
-(function () {
-
-	if (typeof Prism === 'undefined' || typeof document === 'undefined') {
-		return;
-	}
-
-	var CLASS_PATTERN = /(?:^|\s)command-line(?:\s|$)/;
-	var PROMPT_CLASS = 'command-line-prompt';
-
-	/** @type {(str: string, prefix: string) => boolean} */
-	var startsWith = ''.startsWith
-		? function (s, p) { return s.startsWith(p); }
-		: function (s, p) { return s.indexOf(p) === 0; };
-
-	// Support for IE11 that has no endsWith()
-	/** @type {(str: string, suffix: string) => boolean} */
-	var endsWith = ''.endsWith
-		? function (str, suffix) {
-			return str.endsWith(suffix);
-		}
-		: function (str, suffix) {
-			var len = str.length;
-			return str.substring(len - suffix.length, len) === suffix;
-		};
-
-	/**
-	 * Returns whether the given hook environment has a command line info object.
-	 *
-	 * @param {any} env
-	 * @returns {boolean}
-	 */
-	function hasCommandLineInfo(env) {
-		var vars = env.vars = env.vars || {};
-		return 'command-line' in vars;
-	}
-	/**
-	 * Returns the command line info object from the given hook environment.
-	 *
-	 * @param {any} env
-	 * @returns {CommandLineInfo}
-	 *
-	 * @typedef CommandLineInfo
-	 * @property {boolean} [complete]
-	 * @property {number} [numberOfLines]
-	 * @property {string[]} [outputLines]
-	 */
-	function getCommandLineInfo(env) {
-		var vars = env.vars = env.vars || {};
-		return vars['command-line'] = vars['command-line'] || {};
-	}
-
-
-	Prism.hooks.add('before-highlight', function (env) {
-		var commandLine = getCommandLineInfo(env);
-
-		if (commandLine.complete || !env.code) {
-			commandLine.complete = true;
-			return;
-		}
-
-		// Works only for <code> wrapped inside <pre> (not inline).
-		var pre = env.element.parentElement;
-		if (!pre || !/pre/i.test(pre.nodeName) || // Abort only if neither the <pre> nor the <code> have the class
-			(!CLASS_PATTERN.test(pre.className) && !CLASS_PATTERN.test(env.element.className))) {
-			commandLine.complete = true;
-			return;
-		}
-
-		// The element might be highlighted multiple times, so we just remove the previous prompt
-		var existingPrompt = env.element.querySelector('.' + PROMPT_CLASS);
-		if (existingPrompt) {
-			existingPrompt.remove();
-		}
-
-		var codeLines = env.code.split('\n');
-
-		commandLine.numberOfLines = codeLines.length;
-		/** @type {string[]} */
-		var outputLines = commandLine.outputLines = [];
-
-		var outputSections = pre.getAttribute('data-output');
-		var outputFilter = pre.getAttribute('data-filter-output');
-		if (outputSections !== null) { // The user specified the output lines. -- cwells
-			outputSections.split(',').forEach(function (section) {
-				var range = section.split('-');
-				var outputStart = parseInt(range[0], 10);
-				var outputEnd = range.length === 2 ? parseInt(range[1], 10) : outputStart;
-
-				if (!isNaN(outputStart) && !isNaN(outputEnd)) {
-					if (outputStart < 1) {
-						outputStart = 1;
-					}
-					if (outputEnd > codeLines.length) {
-						outputEnd = codeLines.length;
-					}
-					// Convert start and end to 0-based to simplify the arrays. -- cwells
-					outputStart--;
-					outputEnd--;
-					// Save the output line in an array and clear it in the code so it's not highlighted. -- cwells
-					for (var j = outputStart; j <= outputEnd; j++) {
-						outputLines[j] = codeLines[j];
-						codeLines[j] = '';
-					}
-				}
-			});
-		} else if (outputFilter) { // Treat lines beginning with this string as output. -- cwells
-			for (var i = 0; i < codeLines.length; i++) {
-				if (startsWith(codeLines[i], outputFilter)) { // This line is output. -- cwells
-					outputLines[i] = codeLines[i].slice(outputFilter.length);
-					codeLines[i] = '';
-				}
-			}
-		}
-
-		var continuationLineIndicies = commandLine.continuationLineIndicies = new Set();
-		var lineContinuationStr = pre.getAttribute('data-continuation-str');
-		var continuationFilter = pre.getAttribute('data-filter-continuation');
-
-		// Identify code lines where the command has continued onto subsequent
-		// lines and thus need a different prompt. Need to do this after the output
-		// lines have been removed to ensure we don't pick up a continuation string
-		// in an output line.
-		for (var j = 0; j < codeLines.length; j++) {
-			var line = codeLines[j];
-			if (!line) {
-				continue;
-			}
-
-			// Record the next line as a continuation if this one ends in a continuation str.
-			if (lineContinuationStr && endsWith(line, lineContinuationStr)) {
-				continuationLineIndicies.add(j + 1);
-			}
-			// Record this line as a continuation if marked with a continuation prefix
-			// (that we will remove).
-			if (j > 0 && continuationFilter && startsWith(line, continuationFilter)) {
-				codeLines[j] = line.slice(continuationFilter.length);
-				continuationLineIndicies.add(j);
-			}
-		}
-
-		env.code = codeLines.join('\n');
-	});
-
-	Prism.hooks.add('before-insert', function (env) {
-		var commandLine = getCommandLineInfo(env);
-
-		if (commandLine.complete) {
-			return;
-		}
-
-		// Reinsert the output lines into the highlighted code. -- cwells
-		var codeLines = env.highlightedCode.split('\n');
-		var outputLines = commandLine.outputLines || [];
-		for (var i = 0, l = codeLines.length; i < l; i++) {
-			// Add spans to allow distinction of input/output text for styling
-			if (outputLines.hasOwnProperty(i)) {
-				// outputLines were removed from codeLines so missed out on escaping
-				// of markup so do it here.
-				codeLines[i] = '<span class="token output">'
-					+ Prism.util.encode(outputLines[i]) + '</span>';
-			} else {
-				codeLines[i] = '<span class="token command">'
-					+ codeLines[i] + '</span>';
-			}
-		}
-		env.highlightedCode = codeLines.join('\n');
-	});
-
-	Prism.hooks.add('complete', function (env) {
-		if (!hasCommandLineInfo(env)) {
-			// the previous hooks never ran
-			return;
-		}
-
-		var commandLine = getCommandLineInfo(env);
-
-		if (commandLine.complete) {
-			return;
-		}
-
-		var pre = env.element.parentElement;
-		if (CLASS_PATTERN.test(env.element.className)) { // Remove the class "command-line" from the <code>
-			env.element.className = env.element.className.replace(CLASS_PATTERN, ' ');
-		}
-		if (!CLASS_PATTERN.test(pre.className)) { // Add the class "command-line" to the <pre>
-			pre.className += ' command-line';
-		}
-
-		function getAttribute(key, defaultValue) {
-			return (pre.getAttribute(key) || defaultValue).replace(/"/g, '&quot');
-		}
-
-		// Create the "rows" that will become the command-line prompts. -- cwells
-		var promptLines = '';
-		var rowCount = commandLine.numberOfLines || 0;
-		var promptText = getAttribute('data-prompt', '');
-		var promptLine;
-		if (promptText !== '') {
-			promptLine = '<span data-prompt="' + promptText + '"></span>';
-		} else {
-			var user = getAttribute('data-user', 'user');
-			var host = getAttribute('data-host', 'localhost');
-			promptLine = '<span data-user="' + user + '" data-host="' + host + '"></span>';
-		}
-
-		var continuationLineIndicies = commandLine.continuationLineIndicies || new Set();
-		var continuationPromptText = getAttribute('data-continuation-prompt', '>');
-		var continuationPromptLine = '<span data-continuation-prompt="' + continuationPromptText + '"></span>';
-
-		// Assemble all the appropriate prompt/continuation lines
-		for (var j = 0; j < rowCount; j++) {
-			if (continuationLineIndicies.has(j)) {
-				promptLines += continuationPromptLine;
-			} else {
-				promptLines += promptLine;
-			}
-		}
-
-		// Create the wrapper element. -- cwells
-		var prompt = document.createElement('span');
-		prompt.className = PROMPT_CLASS;
-		prompt.innerHTML = promptLines;
-
-		// Remove the prompt from the output lines. -- cwells
-		var outputLines = commandLine.outputLines || [];
-		for (var i = 0, l = outputLines.length; i < l; i++) {
-			if (outputLines.hasOwnProperty(i)) {
-				var node = prompt.children[i];
-				node.removeAttribute('data-user');
-				node.removeAttribute('data-host');
-				node.removeAttribute('data-prompt');
-			}
-		}
-
-		env.element.insertBefore(prompt, env.element.firstChild);
-		commandLine.complete = true;
-	});
-
-}());
-
-(function () {
-
-	if (typeof Prism === 'undefined') {
-		return;
-	}
-
-	var assign = Object.assign || function (obj1, obj2) {
-		for (var name in obj2) {
-			if (obj2.hasOwnProperty(name)) {
-				obj1[name] = obj2[name];
-			}
-		}
-		return obj1;
-	};
-
-	function NormalizeWhitespace(defaults) {
-		this.defaults = assign({}, defaults);
-	}
-
-	function toCamelCase(value) {
-		return value.replace(/-(\w)/g, function (match, firstChar) {
-			return firstChar.toUpperCase();
-		});
-	}
-
-	function tabLen(str) {
-		var res = 0;
-		for (var i = 0; i < str.length; ++i) {
-			if (str.charCodeAt(i) == '\t'.charCodeAt(0)) {
-				res += 3;
-			}
-		}
-		return str.length + res;
-	}
-
-	var settingsConfig = {
-		'remove-trailing': 'boolean',
-		'remove-indent': 'boolean',
-		'left-trim': 'boolean',
-		'right-trim': 'boolean',
-		'break-lines': 'number',
-		'indent': 'number',
-		'remove-initial-line-feed': 'boolean',
-		'tabs-to-spaces': 'number',
-		'spaces-to-tabs': 'number',
-	};
-
-	NormalizeWhitespace.prototype = {
-		setDefaults: function (defaults) {
-			this.defaults = assign(this.defaults, defaults);
-		},
-		normalize: function (input, settings) {
-			settings = assign(this.defaults, settings);
-
-			for (var name in settings) {
-				var methodName = toCamelCase(name);
-				if (name !== 'normalize' && methodName !== 'setDefaults' &&
-					settings[name] && this[methodName]) {
-					input = this[methodName].call(this, input, settings[name]);
-				}
-			}
-
-			return input;
-		},
-
-		/*
-		 * Normalization methods
-		 */
-		leftTrim: function (input) {
-			return input.replace(/^\s+/, '');
-		},
-		rightTrim: function (input) {
-			return input.replace(/\s+$/, '');
-		},
-		tabsToSpaces: function (input, spaces) {
-			spaces = spaces|0 || 4;
-			return input.replace(/\t/g, new Array(++spaces).join(' '));
-		},
-		spacesToTabs: function (input, spaces) {
-			spaces = spaces|0 || 4;
-			return input.replace(RegExp(' {' + spaces + '}', 'g'), '\t');
-		},
-		removeTrailing: function (input) {
-			return input.replace(/\s*?$/gm, '');
-		},
-		// Support for deprecated plugin remove-initial-line-feed
-		removeInitialLineFeed: function (input) {
-			return input.replace(/^(?:\r?\n|\r)/, '');
-		},
-		removeIndent: function (input) {
-			var indents = input.match(/^[^\S\n\r]*(?=\S)/gm);
-
-			if (!indents || !indents[0].length) {
-				return input;
-			}
-
-			indents.sort(function (a, b) { return a.length - b.length; });
-
-			if (!indents[0].length) {
-				return input;
-			}
-
-			return input.replace(RegExp('^' + indents[0], 'gm'), '');
-		},
-		indent: function (input, tabs) {
-			return input.replace(/^[^\S\n\r]*(?=\S)/gm, new Array(++tabs).join('\t') + '$&');
-		},
-		breakLines: function (input, characters) {
-			characters = (characters === true) ? 80 : characters|0 || 80;
-
-			var lines = input.split('\n');
-			for (var i = 0; i < lines.length; ++i) {
-				if (tabLen(lines[i]) <= characters) {
-					continue;
-				}
-
-				var line = lines[i].split(/(\s+)/g);
-				var len = 0;
-
-				for (var j = 0; j < line.length; ++j) {
-					var tl = tabLen(line[j]);
-					len += tl;
-					if (len > characters) {
-						line[j] = '\n' + line[j];
-						len = tl;
-					}
-				}
-				lines[i] = line.join('');
-			}
-			return lines.join('\n');
-		}
-	};
-
-	// Support node modules
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = NormalizeWhitespace;
-	}
-
-	Prism.plugins.NormalizeWhitespace = new NormalizeWhitespace({
-		'remove-trailing': true,
-		'remove-indent': true,
-		'left-trim': true,
-		'right-trim': true,
-		/*'break-lines': 80,
-		'indent': 2,
-		'remove-initial-line-feed': false,
-		'tabs-to-spaces': 4,
-		'spaces-to-tabs': 4*/
-	});
-
-	Prism.hooks.add('before-sanity-check', function (env) {
-		var Normalizer = Prism.plugins.NormalizeWhitespace;
-
-		// Check settings
-		if (env.settings && env.settings['whitespace-normalization'] === false) {
-			return;
-		}
-
-		// Check classes
-		if (!Prism.util.isActive(env.element, 'whitespace-normalization', true)) {
-			return;
-		}
-
-		// Simple mode if there is no env.element
-		if ((!env.element || !env.element.parentNode) && env.code) {
-			env.code = Normalizer.normalize(env.code, env.settings);
-			return;
-		}
-
-		// Normal mode
-		var pre = env.element.parentNode;
-		if (!env.code || !pre || pre.nodeName.toLowerCase() !== 'pre') {
-			return;
-		}
-
-		if (env.settings == null) { env.settings = {}; }
-
-		// Read settings from 'data-' attributes
-		for (var key in settingsConfig) {
-			if (Object.hasOwnProperty.call(settingsConfig, key)) {
-				var settingType = settingsConfig[key];
-				if (pre.hasAttribute('data-' + key)) {
-					try {
-						var value = JSON.parse(pre.getAttribute('data-' + key) || 'true');
-						if (typeof value === settingType) {
-							env.settings[key] = value;
-						}
-					} catch (_error) {
-						// ignore error
-					}
-				}
-			}
-		}
-
-		var children = pre.childNodes;
-		var before = '';
-		var after = '';
-		var codeFound = false;
-
-		// Move surrounding whitespace from the <pre> tag into the <code> tag
-		for (var i = 0; i < children.length; ++i) {
-			var node = children[i];
-
-			if (node == env.element) {
-				codeFound = true;
-			} else if (node.nodeName === '#text') {
-				if (codeFound) {
-					after += node.nodeValue;
-				} else {
-					before += node.nodeValue;
-				}
-
-				pre.removeChild(node);
-				--i;
-			}
-		}
-
-		if (!env.element.children.length || !Prism.plugins.KeepMarkup) {
-			env.code = before + env.code + after;
-			env.code = Normalizer.normalize(env.code, env.settings);
-		} else {
-			// Preserve markup for keep-markup plugin
-			var html = before + env.element.innerHTML + after;
-			env.element.innerHTML = Normalizer.normalize(html, env.settings);
-			env.code = env.element.textContent;
-		}
-	});
-
-}());
 
 (function () {
 
@@ -5609,237 +4982,5 @@ Prism.languages.sql = {
 	 * Register the toolbar with Prism.
 	 */
 	Prism.hooks.add('complete', hook);
-}());
-
-(function () {
-
-	if (typeof Prism === 'undefined' || typeof document === 'undefined') {
-		return;
-	}
-
-	if (!Prism.plugins.toolbar) {
-		console.warn('Copy to Clipboard plugin loaded before Toolbar plugin.');
-
-		return;
-	}
-
-	/**
-	 * When the given elements is clicked by the user, the given text will be copied to clipboard.
-	 *
-	 * @param {HTMLElement} element
-	 * @param {CopyInfo} copyInfo
-	 *
-	 * @typedef CopyInfo
-	 * @property {() => string} getText
-	 * @property {() => void} success
-	 * @property {(reason: unknown) => void} error
-	 */
-	function registerClipboard(element, copyInfo) {
-		element.addEventListener('click', function () {
-			copyTextToClipboard(copyInfo);
-		});
-	}
-
-	// https://stackoverflow.com/a/30810322/7595472
-
-	/** @param {CopyInfo} copyInfo */
-	function fallbackCopyTextToClipboard(copyInfo) {
-		var textArea = document.createElement('textarea');
-		textArea.value = copyInfo.getText();
-
-		// Avoid scrolling to bottom
-		textArea.style.top = '0';
-		textArea.style.left = '0';
-		textArea.style.position = 'fixed';
-
-		document.body.appendChild(textArea);
-		textArea.focus();
-		textArea.select();
-
-		try {
-			var successful = document.execCommand('copy');
-			setTimeout(function () {
-				if (successful) {
-					copyInfo.success();
-				} else {
-					copyInfo.error();
-				}
-			}, 1);
-		} catch (err) {
-			setTimeout(function () {
-				copyInfo.error(err);
-			}, 1);
-		}
-
-		document.body.removeChild(textArea);
-	}
-	/** @param {CopyInfo} copyInfo */
-	function copyTextToClipboard(copyInfo) {
-		if (navigator.clipboard) {
-			navigator.clipboard.writeText(copyInfo.getText()).then(copyInfo.success, function () {
-				// try the fallback in case `writeText` didn't work
-				fallbackCopyTextToClipboard(copyInfo);
-			});
-		} else {
-			fallbackCopyTextToClipboard(copyInfo);
-		}
-	}
-
-	/**
-	 * Selects the text content of the given element.
-	 *
-	 * @param {Element} element
-	 */
-	function selectElementText(element) {
-		// https://stackoverflow.com/a/20079910/7595472
-		window.getSelection().selectAllChildren(element);
-	}
-
-	/**
-	 * Traverses up the DOM tree to find data attributes that override the default plugin settings.
-	 *
-	 * @param {Element} startElement An element to start from.
-	 * @returns {Settings} The plugin settings.
-	 * @typedef {Record<"copy" | "copy-error" | "copy-success" | "copy-timeout", string | number>} Settings
-	 */
-	function getSettings(startElement) {
-		/** @type {Settings} */
-		var settings = {
-			'copy': 'Copy',
-			'copy-error': 'Press Ctrl+C to copy',
-			'copy-success': 'Copied!',
-			'copy-timeout': 5000
-		};
-
-		var prefix = 'data-prismjs-';
-		for (var key in settings) {
-			var attr = prefix + key;
-			var element = startElement;
-			while (element && !element.hasAttribute(attr)) {
-				element = element.parentElement;
-			}
-			if (element) {
-				settings[key] = element.getAttribute(attr);
-			}
-		}
-		return settings;
-	}
-
-	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
-		var element = env.element;
-
-		var settings = getSettings(element);
-
-		var linkCopy = document.createElement('button');
-		linkCopy.className = 'copy-to-clipboard-button';
-		linkCopy.setAttribute('type', 'button');
-		var linkSpan = document.createElement('span');
-		linkCopy.appendChild(linkSpan);
-
-		setState('copy');
-
-		registerClipboard(linkCopy, {
-			getText: function () {
-				return element.textContent;
-			},
-			success: function () {
-				setState('copy-success');
-
-				resetText();
-			},
-			error: function () {
-				setState('copy-error');
-
-				setTimeout(function () {
-					selectElementText(element);
-				}, 1);
-
-				resetText();
-			}
-		});
-
-		return linkCopy;
-
-		function resetText() {
-			setTimeout(function () { setState('copy'); }, settings['copy-timeout']);
-		}
-
-		/** @param {"copy" | "copy-error" | "copy-success"} state */
-		function setState(state) {
-			linkSpan.textContent = settings[state];
-			linkCopy.setAttribute('data-copy-state', state);
-		}
-	});
-}());
-
-(function () {
-
-	if (typeof Prism === 'undefined') {
-		return;
-	}
-
-	Prism.languages.treeview = {
-		'treeview-part': {
-			pattern: /^.+/m,
-			inside: {
-				'entry-line': [
-					{
-						pattern: /\|-- |├── /,
-						alias: 'line-h'
-					},
-					{
-						pattern: /\| {3}|│ {3}/,
-						alias: 'line-v'
-					},
-					{
-						pattern: /`-- |└── /,
-						alias: 'line-v-last'
-					},
-					{
-						pattern: / {4}/,
-						alias: 'line-v-gap'
-					}
-				],
-				'entry-name': {
-					pattern: /.*\S.*/,
-					inside: {
-						// symlink
-						'operator': / -> /,
-					}
-				}
-			}
-		}
-	};
-
-	Prism.hooks.add('wrap', function (env) {
-		if (env.language === 'treeview' && env.type === 'entry-name') {
-			var classes = env.classes;
-
-			var folderPattern = /(^|[^\\])\/\s*$/;
-			if (folderPattern.test(env.content)) {
-				// folder
-
-				// remove trailing /
-				env.content = env.content.replace(folderPattern, '$1');
-				classes.push('dir');
-			} else {
-				// file
-
-				// remove trailing file marker
-				env.content = env.content.replace(/(^|[^\\])[=*|]\s*$/, '$1');
-
-				var parts = env.content.toLowerCase().replace(/\s+/g, '').split('.');
-				while (parts.length > 1) {
-					parts.shift();
-					// Ex. 'foo.min.js' would become '<span class="token keyword ext-min-js ext-js">foo.min.js</span>'
-					classes.push('ext-' + parts.join('-'));
-				}
-			}
-
-			if (env.content[0] === '.') {
-				classes.push('dotfile');
-			}
-		}
-	});
 }());
 

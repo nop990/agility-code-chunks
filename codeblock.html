@@ -3,17 +3,20 @@
     <link href="themes/prism.css" rel="stylesheet"/>
     <title>Code Block</title>
     <header></header>
+    <script src="bundle.js"></script>
 </head>
 <body>
 <header data-plugin-header="show-language"></header>
-<pre data-src="plugins/prism-toolbar.js"><code class="language-css">
-      @import('google.com/styles.css');
+<pre><code class="language-java">
+<!--  Purposefully formatted poorly  -->
+      package com.example;
 
-      p {
-        color: red;
+    public class Main {
 
+        public static void main(String[] args) {
+                        System.out.println("Hello World!");
 
-
+                }
     }
 </code></pre>
 <script src="prism.js"></script>

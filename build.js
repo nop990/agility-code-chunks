@@ -1,7 +1,7 @@
 const browserify = require('browserify');
 const fs = require('fs');
 
-browserify(['content.js', 'prism.js'])
+browserify(['format.js'])
     .transform('babelify', { presets: ['@babel/preset-env'] })
     .bundle((err, buf) => {
         if (err) {

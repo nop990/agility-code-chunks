@@ -16875,8 +16875,6 @@ async function convertToPreCode(language, codeContent) {
 }
 
 async function scanDocument() {
-    if (!isConversionOn) return;
-
     console.log("%cScanning document", "color: green; font-size: 16px;");
     let els = 0;
 
@@ -16900,7 +16898,6 @@ async function scanDocument() {
                 await convertToPreCode(language, codeContent).then((result) => {
                     formattedCode = result;
                 });
-                console.log("code:", formattedCode);
                 newElement = createCodeBlockElement(language);
             }
             newElement.querySelector('code').textContent = formattedCode;
@@ -16916,9 +16913,8 @@ async function scanDocument() {
 }
 
 function revertDocument() {
-    if (isConversionOn) return;
-
     console.log('%cReverting document', 'color: red; font-size: 16px;');
+
     let els = 0;
 
     document.querySelectorAll('.code-block').forEach(codeBlock => {
@@ -16935,8 +16931,8 @@ document.addEventListener("click", async (event) => {
         await copyToClipboard(text, event.target);
     } else if(event.target.className && event.target.className.baseVal && event.target.className.baseVal.includes("close")) {
         revertDocument();
-    } else {
-        console.log(event.target.className.baseVal);
+    } else if(event.target.className && event.target.className.includes("scrim ignore-react-onclickoutside")) {
+        revertDocument();
     }
 });
 

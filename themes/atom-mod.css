@@ -72,6 +72,7 @@ body {
     border-radius: 10px;
     code {
         padding: 1rem !important;
+        text-shadow: none !important;
     }
 }
 

@@ -1,0 +1,80 @@
+body {
+    background: unset;
+    background-image: unset;
+    background-size: unset;
+    background-repeat: unset;
+    background-position: unset;
+}
+
+.buttons {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 2;
+
+    display: flex;
+}
+
+.label {
+    color: white;
+
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px;
+
+    font-family: "Fira Sans", sans-serif;
+    font-size: .75rem;
+
+    background-color: rgba(0,0,0,.3);
+
+    user-select: none;
+    text-decoration: none !important;
+}
+
+.code-block:hover {
+    .copy {
+        display: block;
+    }
+}
+
+.copy {
+    display: none;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 5px;
+
+    font-family: "Fira Sans", sans-serif;
+    font-size: .75rem;
+
+    background-color: rgba(0,0,0,.3);
+
+    user-select: none;
+}
+
+.copy:hover {
+    cursor: pointer;
+    background-color: rgba(0,0,0,.1);
+}
+
+.copy:active {
+    background-color: rgba(0,0,0,.3);
+}
+
+.code-block {
+    position: relative;
+    width: fit-content;
+    min-width: 45%;
+    margin: 1rem 0 0 1rem;
+    background-color: #282c34;
+}
+
+.theme-atom-one-dark {
+    border-radius: 10px;
+    code {
+        padding: 1rem !important;
+    }
+}
+
+span {
+    text-shadow: none !important;
+}

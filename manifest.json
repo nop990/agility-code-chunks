@@ -30,8 +30,8 @@
     {
       "matches": ["*://*.v1host.com/*"],
       "run_at": "document_start",
-      "js": ["bundle.js", "prism.js"],
-      "css": ["./themes/prism.css"]
+      "js": ["bundle.js"],
+      "css": ["./themes/atom-mod.css", "./node_modules/highlight.js/styles/default.min.css", "./node_modules/highlight.js/styles/atom-one-dark.css", "./themes/819c34e530460f7c.css"]
     }
   ]
 }

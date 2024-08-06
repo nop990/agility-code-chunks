@@ -1,8 +1,8 @@
 const browserify = require('browserify');
+const esmify = require('esmify');
 const fs = require('fs');
 
-browserify(['format.js'])
-    .transform('babelify', { presets: ['@babel/preset-env'] })
+browserify(['render.js'], {plugin: [[esmify, {nodeModules: true}]]})
     .bundle((err, buf) => {
         if (err) {
             console.error(err);

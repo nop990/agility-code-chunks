@@ -7,7 +7,7 @@
     "build": "node build.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Christopher Willman",
+  "author": "nop990",
   "license": "MIT",
   "devDependencies": {
     "@babel/preset-env": "^7.25.2",
